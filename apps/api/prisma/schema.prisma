@@ -1,0 +1,317 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ─── Enums ──────────────────────────────────────────────────────────────────
+
+enum Plan {
+  FREE
+  STARTER
+  PRO
+  ENTERPRISE
+}
+
+enum AssessmentStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum AppStatus {
+  SAVED
+  APPLIED
+  INTERVIEWING
+  OFFER
+  REJECTED
+}
+
+enum MessageRole {
+  USER
+  ASSISTANT
+  SYSTEM
+}
+
+enum InterviewType {
+  BEHAVIORAL
+  TECHNICAL
+  SITUATIONAL
+  MIXED
+}
+
+enum NotifType {
+  ASSESSMENT_COMPLETE
+  JOB_MATCH
+  SKILL_MILESTONE
+  BILLING
+  SYSTEM
+}
+
+// ─── Models ─────────────────────────────────────────────────────────────────
+
+model User {
+  id               String   @id @default(cuid())
+  clerkId          String   @unique
+  email            String   @unique
+  name             String?
+  avatarUrl        String?
+  plan             Plan     @default(FREE)
+  stripeCustomerId String?  @unique
+  stripeSubId      String?  @unique
+  onboardingDone   Boolean  @default(false)
+  currentTitle     String?
+  targetRole       String?
+  yearsExp         Int?
+  skills           String[]
+  location         String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  assessments       Assessment[]
+  savedJobs         SavedJob[]
+  applications      JobApplication[]
+  roadmaps          SkillRoadmap[]
+  userSkills        UserSkill[]
+  resumes           Resume[]
+  chatSessions      ChatSession[]
+  interviewSessions InterviewSession[]
+  notifications     Notification[]
+  tokenUsage        TokenUsage[]
+
+  @@index([clerkId])
+  @@index([email])
+  @@index([plan])
+}
+
+model Assessment {
+  id          String           @id @default(cuid())
+  userId      String
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  jobId       String?          @unique
+  status      AssessmentStatus @default(PENDING)
+  answers     Json
+  result      Json?
+  tokensUsed  Int              @default(0)
+  processingMs Int?
+  errorMsg    String?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  jobRecommendations JobRecommendation[]
+
+  @@index([userId])
+  @@index([userId, createdAt])
+  @@index([status])
+}
+
+model JobRecommendation {
+  id           String     @id @default(cuid())
+  assessmentId String
+  assessment   Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  title        String
+  company      String?
+  description  String?    @db.Text
+  matchScore   Float
+  skillGaps    String[]
+  salaryMin    Int?
+  salaryMax    Int?
+  location     String?
+  remote       Boolean    @default(false)
+  embeddingId  String?
+  sourceUrl    String?
+  whyItFits    String?    @db.Text
+  createdAt    DateTime   @default(now())
+
+  @@index([assessmentId])
+  @@index([matchScore])
+}
+
+model SavedJob {
+  id         String    @id @default(cuid())
+  userId     String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  externalId String
+  source     String
+  title      String
+  company    String
+  location   String?
+  salaryMin  Int?
+  salaryMax  Int?
+  description String?  @db.Text
+  url        String
+  status     AppStatus @default(SAVED)
+  notes      String?   @db.Text
+  appliedAt  DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  applications JobApplication[]
+
+  @@unique([userId, externalId, source])
+  @@index([userId, status])
+  @@index([userId, createdAt])
+}
+
+model JobApplication {
+  id         String    @id @default(cuid())
+  userId     String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  savedJobId String?
+  savedJob   SavedJob? @relation(fields: [savedJobId], references: [id])
+  history    Json      @default("[]")
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@index([userId])
+}
+
+model SkillRoadmap {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title         String
+  targetRole    String
+  timelineWeeks Int
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  skills RoadmapSkill[]
+
+  @@index([userId])
+  @@index([userId, isActive])
+}
+
+model RoadmapSkill {
+  id          String       @id @default(cuid())
+  roadmapId   String
+  roadmap     SkillRoadmap @relation(fields: [roadmapId], references: [id], onDelete: Cascade)
+  skillName   String
+  category    String
+  weekStart   Int
+  weekEnd     Int
+  resources   Json
+  completedAt DateTime?
+  order       Int
+
+  @@index([roadmapId])
+  @@index([roadmapId, order])
+}
+
+model UserSkill {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  skillName    String
+  level        Int      @default(1)
+  verified     Boolean  @default(false)
+  endorsements Int      @default(0)
+  updatedAt    DateTime @updatedAt
+
+  @@unique([userId, skillName])
+  @@index([userId])
+}
+
+model Resume {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  filename     String
+  storageKey   String
+  parsedText   String?  @db.Text
+  parsedData   Json?
+  atsScore     Int?
+  atsIssues    Json?
+  optimized    Boolean  @default(false)
+  optimizedKey String?
+  isActive     Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([userId])
+  @@index([userId, isActive])
+}
+
+model ChatSession {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title      String?
+  context    Json?
+  tokensUsed Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  messages ChatMessage[]
+
+  @@index([userId])
+  @@index([userId, createdAt])
+}
+
+model ChatMessage {
+  id         String      @id @default(cuid())
+  sessionId  String
+  session    ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  role       MessageRole
+  content    String      @db.Text
+  tokensUsed Int?
+  createdAt  DateTime    @default(now())
+
+  @@index([sessionId])
+  @@index([sessionId, createdAt])
+}
+
+model InterviewSession {
+  id          String        @id @default(cuid())
+  userId      String
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type        InterviewType
+  targetRole  String
+  questions   Json
+  answers     Json          @default("[]")
+  overallScore Int?
+  feedback    String?       @db.Text
+  completedAt DateTime?
+  createdAt   DateTime      @default(now())
+
+  @@index([userId])
+  @@index([userId, createdAt])
+}
+
+model Notification {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      NotifType
+  title     String
+  body      String
+  data      Json?
+  read      Boolean   @default(false)
+  emailSent Boolean   @default(false)
+  createdAt DateTime  @default(now())
+
+  @@index([userId, read])
+  @@index([userId, createdAt])
+}
+
+model TokenUsage {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  feature      String
+  model        String
+  inputTokens  Int
+  outputTokens Int
+  costUsd      Float
+  createdAt    DateTime @default(now())
+
+  @@index([userId, feature])
+  @@index([createdAt])
+  @@index([userId, createdAt])
+}
