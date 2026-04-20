@@ -1,0 +1,105 @@
+name: CI
+
+on:
+  push:
+    branches: [main, 'claude/**']
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    name: Lint / Typecheck / Test / Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: careercompass_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7-alpine
+        ports: ['6379:6379']
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/careercompass_test
+      DATABASE_URL_TEST: postgresql://postgres:postgres@localhost:5432/careercompass_test
+      REDIS_URL: redis://localhost:6379
+      NODE_ENV: test
+      CLERK_SECRET_KEY: sk_test_placeholder
+      CLERK_WEBHOOK_SECRET: whsec_placeholder
+      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: pk_test_placeholder
+      ANTHROPIC_API_KEY: sk-ant-placeholder
+      STRIPE_SECRET_KEY: sk_test_placeholder
+      STRIPE_WEBHOOK_SECRET: whsec_placeholder
+      NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: pk_test_placeholder
+      STRIPE_STARTER_PRICE_ID: price_placeholder
+      STRIPE_PRO_PRICE_ID: price_placeholder
+      SUPABASE_URL: https://placeholder.supabase.co
+      SUPABASE_SERVICE_KEY: placeholder
+      PINECONE_API_KEY: placeholder
+      PINECONE_INDEX: careercompass
+      RESEND_API_KEY: re_placeholder
+      ADZUNA_APP_ID: placeholder
+      ADZUNA_API_KEY: placeholder
+      JSEARCH_API_KEY: placeholder
+      NEXT_PUBLIC_APP_URL: http://localhost:3000
+      NEXT_PUBLIC_API_URL: http://localhost:4000
+      ADMIN_USER_IDS: ''
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v3
+        with:
+          version: latest
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Run Prisma migrations (test DB)
+        working-directory: apps/api
+        run: pnpm exec prisma migrate deploy
+
+      - name: Run tests
+        run: pnpm test --reporter=verbose
+
+      - name: Build packages
+        run: pnpm --filter @careercompass/types build && pnpm --filter @careercompass/validators build && pnpm --filter @careercompass/constants build
+
+      - name: Build API
+        run: pnpm --filter @careercompass/api build
+
+      - name: Build Web
+        run: pnpm --filter @careercompass/web build
+        env:
+          SKIP_ENV_VALIDATION: true
