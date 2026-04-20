@@ -3,11 +3,21 @@ import { anthropicService } from './anthropic.service.js';
 import { buildChatSystemPrompt } from '../../prompts/chat-system.js';
 import { AI_MODELS } from '@careercompass/constants';
 import type { AIStreamEvent } from '@careercompass/types';
-import type { User as PrismaUser, ChatMessage } from '@prisma/client';
+import type { ChatMessage } from '@prisma/client';
 import type { AssessmentResult } from '@careercompass/types';
 
+interface ChatUser {
+  id: string;
+  name: string | null;
+  currentTitle: string | null;
+  targetRole: string | null;
+  yearsExp: number | null;
+  location: string | null;
+  skills: string[];
+}
+
 export async function *streamChatResponse(
-  user: PrismaUser,
+  user: ChatUser,
   history: ChatMessage[],
   newMessage: string,
   latestResult?: AssessmentResult | null

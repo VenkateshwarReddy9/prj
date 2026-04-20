@@ -26,7 +26,7 @@ export async function createNotification(params: CreateNotificationParams) {
       type: params.type,
       title: params.title,
       body: params.body,
-      data: params.data ?? {},
+      data: (params.data ?? {}) as Record<string, never>,
     },
   });
 

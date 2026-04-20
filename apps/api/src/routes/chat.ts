@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { type Router, Router as ExpressRouter } from 'express';
 import { authenticate } from '../middleware/auth.js';
 import { requireChatQuota } from '../middleware/requirePlan.js';
 import { rateLimiter } from '../middleware/rateLimiter.js';
@@ -9,7 +9,7 @@ import { NotFoundError, ForbiddenError } from '../lib/errors.js';
 import { CreateChatSessionSchema, SendMessageSchema } from '@careercompass/validators';
 import type { AssessmentResult } from '@careercompass/types';
 
-const router = Router();
+const router: Router = ExpressRouter();
 
 router.post('/chat/sessions', authenticate, validateBody(CreateChatSessionSchema), async (req, res) => {
   const session = await prisma.chatSession.create({

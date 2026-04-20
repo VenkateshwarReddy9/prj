@@ -1,8 +1,8 @@
-import { Router } from 'express';
+import { type Router, Router as ExpressRouter } from 'express';
 import { authenticate, requireAdmin } from '../middleware/auth.js';
 import { prisma } from '../config/prisma.js';
 
-const router = Router();
+const router: Router = ExpressRouter();
 
 router.get('/admin/metrics', authenticate, requireAdmin, async (_req, res) => {
   const now = new Date();
@@ -41,7 +41,10 @@ router.get('/admin/metrics', authenticate, requireAdmin, async (_req, res) => {
       aiTokensLast30Days:
         (tokenCostThisMonth._sum.inputTokens ?? 0) + (tokenCostThisMonth._sum.outputTokens ?? 0),
       planBreakdown: planBreakdown.reduce(
-        (acc, p) => ({ ...acc, [p.plan]: p._count }),
+        (acc: Record<string, number>, p: { plan: string; _count: number }) => ({
+          ...acc,
+          [p.plan]: p._count,
+        }),
         {} as Record<string, number>
       ),
     },

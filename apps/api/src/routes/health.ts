@@ -1,8 +1,8 @@
-import { Router } from 'express';
+import { type Router, Router as ExpressRouter } from 'express';
 import { prisma } from '../config/prisma.js';
 import { redis } from '../config/redis.js';
 
-const router = Router();
+const router: Router = ExpressRouter();
 
 router.get('/health', async (_req, res) => {
   const checks: Record<string, boolean> = {

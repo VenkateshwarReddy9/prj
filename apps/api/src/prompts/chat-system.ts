@@ -1,8 +1,16 @@
-import type { User as PrismaUser } from '@prisma/client';
 import type { AssessmentResult } from '@careercompass/types';
 
+interface UserContext {
+  name: string | null;
+  currentTitle: string | null;
+  targetRole: string | null;
+  yearsExp: number | null;
+  location: string | null;
+  skills: string[];
+}
+
 export function buildChatSystemPrompt(
-  user: PrismaUser,
+  user: UserContext,
   latestResult?: AssessmentResult | null
 ): string {
   const userContext = [

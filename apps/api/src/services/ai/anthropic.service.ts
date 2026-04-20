@@ -43,7 +43,7 @@ export class AnthropicService {
     );
 
     const content = response.content[0];
-    if (content.type !== 'text') {
+    if (!content || content.type !== 'text') {
       throw new Error('Unexpected response type from Claude');
     }
 
@@ -98,14 +98,12 @@ export class AnthropicService {
     let outputTokens = 0;
 
     try {
-      const stream = await this.withRetry(() =>
-        this.client.messages.stream({
-          model,
-          max_tokens: params.maxTokens ?? 2048,
-          system: params.system,
-          messages: params.messages,
-        })
-      );
+      const stream = this.client.messages.stream({
+        model,
+        max_tokens: params.maxTokens ?? 2048,
+        system: params.system,
+        messages: params.messages,
+      });
 
       for await (const event of stream) {
         if (

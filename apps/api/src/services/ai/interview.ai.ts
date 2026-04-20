@@ -6,7 +6,7 @@ import {
   buildInterviewEvaluationPrompt,
 } from '../../prompts/interview-questions.js';
 import { AI_MODELS } from '@careercompass/constants';
-import type { InterviewType } from '@prisma/client';
+type InterviewType = 'BEHAVIORAL' | 'TECHNICAL' | 'CASE' | 'MIXED';
 import type { InterviewQuestion, AnswerEvaluation } from '@careercompass/types';
 
 interface QuestionsResponse {

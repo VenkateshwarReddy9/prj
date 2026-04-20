@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { type Router, Router as ExpressRouter } from 'express';
 import { authenticate } from '../middleware/auth.js';
 import { validateBody } from '../middleware/validate.js';
 import { createCheckoutSession, createPortalSession } from '../services/billing/stripe.service.js';
@@ -6,7 +6,7 @@ import { env } from '../config/env.js';
 import { CheckoutSchema } from '@careercompass/validators';
 import { PLAN_PRICES, PLAN_FEATURES } from '@careercompass/constants';
 
-const router = Router();
+const router: Router = ExpressRouter();
 
 router.get('/billing/plans', (_req, res) => {
   res.json({
