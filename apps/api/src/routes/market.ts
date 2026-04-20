@@ -1,9 +1,9 @@
-import { Router } from 'express';
+import { type Router, Router as ExpressRouter } from 'express';
 import { authenticate } from '../middleware/auth.js';
 import { redis } from '../config/redis.js';
 import { CACHE_KEYS, CACHE_TTL } from '@careercompass/constants';
 
-const router = Router();
+const router: Router = ExpressRouter();
 
 // Salary data endpoint — in production, integrate Levels.fyi API or BLS data
 router.get('/market/salary', authenticate, async (req, res) => {

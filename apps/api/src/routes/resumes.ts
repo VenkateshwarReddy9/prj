@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { type Router, Router as ExpressRouter } from 'express';
 import multer from 'multer';
 import { authenticate } from '../middleware/auth.js';
 import { prisma } from '../config/prisma.js';
@@ -7,7 +7,7 @@ import { resumeParseQueue } from '../queues/index.js';
 import { NotFoundError, ForbiddenError, ValidationError } from '../lib/errors.js';
 import { logger } from '../lib/logger.js';
 
-const router = Router();
+const router: Router = ExpressRouter();
 
 const upload = multer({
   storage: multer.memoryStorage(),

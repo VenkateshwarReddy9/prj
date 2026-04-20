@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { type Router, Router as ExpressRouter } from 'express';
 import { authenticate } from '../middleware/auth.js';
 import { validateBody } from '../middleware/validate.js';
 import { prisma } from '../config/prisma.js';
@@ -7,7 +7,7 @@ import { NotFoundError, ForbiddenError } from '../lib/errors.js';
 import { StartInterviewSchema, SubmitAnswerSchema } from '@careercompass/validators';
 import type { InterviewQuestion, InterviewAnswer } from '@careercompass/types';
 
-const router = Router();
+const router: Router = ExpressRouter();
 
 router.post(
   '/interviews/sessions',
@@ -68,7 +68,7 @@ router.post(
     if (!session) throw new NotFoundError('Interview session');
     if (session.userId !== req.userId) throw new ForbiddenError();
 
-    const questions = session.questions as InterviewQuestion[];
+    const questions = session.questions as unknown as InterviewQuestion[];
     const question = questions.find((q) => q.id === req.body.questionId);
     if (!question) throw new NotFoundError('Question');
 
@@ -79,7 +79,7 @@ router.post(
       req.userId
     );
 
-    const existingAnswers = session.answers as InterviewAnswer[];
+    const existingAnswers = session.answers as unknown as InterviewAnswer[];
     const newAnswer: InterviewAnswer = {
       questionId: req.body.questionId,
       answer: req.body.answer,

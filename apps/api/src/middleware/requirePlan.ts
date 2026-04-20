@@ -1,17 +1,16 @@
 import type { Request, Response, NextFunction } from 'express';
-import type { Plan } from '@prisma/client';
 import { PlanRequiredError, QuotaExceededError } from '../lib/errors.js';
 import { PLAN_ORDER, PLAN_LIMITS } from '@careercompass/constants';
 import type { PlanTier } from '@careercompass/constants';
 import { prisma } from '../config/prisma.js';
 
-function planRank(plan: Plan): number {
-  return PLAN_ORDER.indexOf(plan as PlanTier);
+function planRank(plan: PlanTier): number {
+  return PLAN_ORDER.indexOf(plan);
 }
 
 export function requirePlan(minPlan: 'STARTER' | 'PRO' | 'ENTERPRISE') {
   return (req: Request, _res: Response, next: NextFunction) => {
-    if (planRank(req.user.plan) < planRank(minPlan as Plan)) {
+    if (planRank(req.user.plan) < planRank(minPlan as PlanTier)) {
       next(new PlanRequiredError(minPlan));
       return;
     }

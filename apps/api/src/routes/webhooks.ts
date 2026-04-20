@@ -1,4 +1,4 @@
-import { Router, type Request, type Response } from 'express';
+import { Router, type Router as RouterType, type Request, type Response } from 'express';
 import { Webhook } from 'svix';
 import { env } from '../config/env.js';
 import { prisma } from '../config/prisma.js';
@@ -6,7 +6,7 @@ import { handleWebhookEvent } from '../services/billing/stripe.service.js';
 import { sendWelcomeEmail } from '../services/notification/email.service.js';
 import { logger } from '../lib/logger.js';
 
-const router = Router();
+const router: RouterType = Router();
 
 // Clerk webhook — sync user to DB
 router.post('/webhooks/clerk', async (req: Request, res: Response) => {

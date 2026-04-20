@@ -1,4 +1,5 @@
 import { Worker, type Job } from 'bullmq';
+import { type Prisma } from '@prisma/client';
 import { getRedisConnection } from '../config/redis.js';
 import { prisma } from '../config/prisma.js';
 import { generateAssessmentResults } from '../services/ai/assessment.ai.js';
@@ -100,7 +101,7 @@ async function processAssessment(job: Job<AssessmentJobData>) {
           weekStart: i * 4 + 1,
           weekEnd: i * 4 + gap.estimatedWeeksToLearn,
           order: i + 1,
-          resources: gap.resources ?? [],
+          resources: (gap.resources ?? []) as unknown as Prisma.InputJsonValue,
         })),
       });
     }

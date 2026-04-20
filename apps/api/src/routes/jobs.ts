@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { type Router, Router as ExpressRouter } from 'express';
 import { authenticate } from '../middleware/auth.js';
 import { validateBody, validateQuery } from '../middleware/validate.js';
 import { prisma } from '../config/prisma.js';
@@ -9,7 +9,7 @@ import { CACHE_KEYS, CACHE_TTL } from '@careercompass/constants';
 import crypto from 'crypto';
 import type { JobSearchInput } from '@careercompass/validators';
 
-const router = Router();
+const router: Router = ExpressRouter();
 
 async function fetchExternalJobs(filters: JobSearchInput) {
   const results: Array<{

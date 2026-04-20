@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { type Router, Router as ExpressRouter } from 'express';
 import { authenticate } from '../middleware/auth.js';
 import { requireAssessmentQuota } from '../middleware/requirePlan.js';
 import { validateBody } from '../middleware/validate.js';
@@ -7,7 +7,7 @@ import { assessmentQueue } from '../queues/index.js';
 import { NotFoundError, ForbiddenError } from '../lib/errors.js';
 import { SubmitAssessmentSchema, SaveAssessmentAnswersSchema } from '@careercompass/validators';
 
-const router = Router();
+const router: Router = ExpressRouter();
 
 // Start a new assessment (creates a draft)
 router.post('/assessments', authenticate, requireAssessmentQuota(), async (req, res) => {

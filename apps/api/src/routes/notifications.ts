@@ -1,9 +1,9 @@
-import { Router } from 'express';
+import { type Router, Router as ExpressRouter } from 'express';
 import { authenticate } from '../middleware/auth.js';
 import { prisma } from '../config/prisma.js';
 import { NotFoundError, ForbiddenError } from '../lib/errors.js';
 
-const router = Router();
+const router: Router = ExpressRouter();
 
 router.get('/notifications', authenticate, async (req, res) => {
   const [notifications, unreadCount] = await Promise.all([

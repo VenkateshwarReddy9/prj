@@ -1,4 +1,4 @@
-import type { InterviewType } from '@prisma/client';
+type InterviewType = 'BEHAVIORAL' | 'TECHNICAL' | 'CASE' | 'MIXED';
 
 export const INTERVIEW_SYSTEM_PROMPT = `You are a senior hiring manager and career coach with expertise in conducting and evaluating interviews across many industries. Generate realistic, challenging interview questions.
 
@@ -12,8 +12,8 @@ export function buildInterviewQuestionsPrompt(
   const typeDescriptions: Record<InterviewType, string> = {
     BEHAVIORAL: 'behavioral (STAR method — Situation, Task, Action, Result)',
     TECHNICAL: 'technical (role-specific technical knowledge and problem-solving)',
-    SITUATIONAL: 'situational (hypothetical scenarios relevant to the role)',
-    MIXED: 'mixed (combination of behavioral, technical, and situational)',
+    CASE: 'case study (analytical problem-solving and business scenarios)',
+    MIXED: 'mixed (combination of behavioral, technical, and case study)',
   };
 
   return `Generate 15 ${typeDescriptions[type]} interview questions for a ${targetRole} position${company ? ` at ${company}` : ''}.

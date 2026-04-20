@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { type Express } from 'express';
 import 'express-async-errors';
 import helmet from 'helmet';
 import cors from 'cors';
@@ -21,7 +21,7 @@ import { roadmapRouter } from './routes/roadmap.js';
 import { marketRouter } from './routes/market.js';
 import { adminRouter } from './routes/admin.js';
 
-export function createApp() {
+export function createApp(): Express {
   const app = express();
 
   // Security headers
