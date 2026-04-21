@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import * as Sentry from '@sentry/node';
 import http from 'http';
 import { createApp } from './app.js';
 import { createSocketServer } from './socket/index.js';
@@ -11,6 +12,14 @@ import { env } from './config/env.js';
 import { logger } from './lib/logger.js';
 
 async function main() {
+  if (env.SENTRY_DSN) {
+    Sentry.init({
+      dsn: env.SENTRY_DSN,
+      environment: env.NODE_ENV,
+      tracesSampleRate: env.NODE_ENV === 'production' ? 0.1 : 1.0,
+    });
+  }
+
   const app = createApp();
   const httpServer = http.createServer(app);
 

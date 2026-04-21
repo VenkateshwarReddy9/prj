@@ -36,8 +36,14 @@ function JobCard({
           {job.location && (
             <p className="text-xs text-gray-400 mt-0.5">{job.location}</p>
           )}
-          {job.salary && (
-            <p className="text-xs text-green-600 font-medium mt-1">{job.salary}</p>
+          {(job.salaryMin || job.salaryMax) && (
+            <p className="text-xs text-green-600 font-medium mt-1">
+              {job.salaryMin && job.salaryMax
+                ? `$${(job.salaryMin / 1000).toFixed(0)}k–$${(job.salaryMax / 1000).toFixed(0)}k`
+                : job.salaryMin
+                  ? `From $${(job.salaryMin / 1000).toFixed(0)}k`
+                  : `Up to $${(job.salaryMax! / 1000).toFixed(0)}k`}
+            </p>
           )}
         </div>
         <div className="flex gap-1 flex-shrink-0">
