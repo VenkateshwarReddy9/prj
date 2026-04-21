@@ -80,4 +80,49 @@ router.get('/market/trends', authenticate, async (req, res) => {
   res.json(response);
 });
 
+// ── GET /insights — unified endpoint used by the insights dashboard ───────────
+router.get('/insights', authenticate, async (req, res) => {
+  const role = req.user.targetRole ?? 'Software Engineer';
+  const location = req.user.location ?? 'United States';
+
+  const now = new Date();
+  const months = Array.from({ length: 6 }, (_, i) => {
+    const d = new Date(now.getFullYear(), now.getMonth() - (5 - i), 1);
+    return d.toLocaleString('default', { month: 'short' });
+  });
+
+  res.json({
+    data: {
+      salary: {
+        role,
+        location,
+        min: 90000,
+        median: 135000,
+        max: 210000,
+        currency: 'USD',
+      },
+      trends: months.map((month, i) => ({
+        month,
+        jobPostings: 4000 + i * 300 + Math.floor(Math.random() * 500),
+        avgSalary: 128000 + i * 800,
+        demandIndex: 65 + i * 2,
+      })),
+      topSkills: [
+        { skill: 'TypeScript', demand: 88, growth: 12 },
+        { skill: 'React', demand: 84, growth: 8 },
+        { skill: 'Node.js', demand: 76, growth: 6 },
+        { skill: 'AWS', demand: 72, growth: 15 },
+        { skill: 'PostgreSQL', demand: 65, growth: 9 },
+      ],
+      topLocations: [
+        { city: 'San Francisco, CA', count: 4200, avgSalary: 175000 },
+        { city: 'New York, NY', count: 3800, avgSalary: 160000 },
+        { city: 'Seattle, WA', count: 2900, avgSalary: 165000 },
+        { city: 'Austin, TX', count: 2100, avgSalary: 140000 },
+        { city: 'Remote', count: 8500, avgSalary: 145000 },
+      ],
+    },
+  });
+});
+
 export { router as marketRouter };

@@ -109,4 +109,36 @@ router.get('/users/me/usage', authenticate, async (req, res) => {
   });
 });
 
+// ── GET /users/me/settings ────────────────────────────────────────────────────
+router.get('/users/me/settings', authenticate, async (req, res) => {
+  const user = await prisma.user.findUnique({
+    where: { id: req.userId },
+    select: { plan: true, stripeCustomerId: true, notificationPrefs: true },
+  });
+
+  res.json({
+    data: {
+      plan: user?.plan ?? 'FREE',
+      stripeCustomerId: user?.stripeCustomerId ?? null,
+      notificationPrefs: user?.notificationPrefs ?? {
+        jobMatches: true,
+        assessmentReady: true,
+        skillMilestones: true,
+        weeklyDigest: true,
+        marketingEmails: false,
+      },
+    },
+  });
+});
+
+// ── PATCH /users/me/settings/notifications ────────────────────────────────────
+router.patch('/users/me/settings/notifications', authenticate, async (req, res) => {
+  const user = await prisma.user.update({
+    where: { id: req.userId },
+    data: { notificationPrefs: req.body },
+    select: { notificationPrefs: true },
+  });
+  res.json({ data: user.notificationPrefs });
+});
+
 export { router as usersRouter };

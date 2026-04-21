@@ -29,18 +29,19 @@ export function ChatInterface({ sessionId }: Props) {
     queryKey: ['chat-session', sessionId],
     queryFn: () =>
       apiClient.get<{ data: ChatSession }>(`/chat/sessions/${sessionId}`).then((r) => r.data.data),
-    onSuccess: (data) => {
-      if (data.messages) {
-        setMessages(
-          data.messages.map((m: ChatMessage) => ({
-            id: m.id,
-            role: m.role as 'USER' | 'ASSISTANT',
-            content: m.content,
-          }))
-        );
-      }
-    },
   });
+
+  useEffect(() => {
+    if (session?.messages) {
+      setMessages(
+        session.messages.map((m: ChatMessage) => ({
+          id: m.id,
+          role: m.role as 'USER' | 'ASSISTANT',
+          content: m.content,
+        }))
+      );
+    }
+  }, [session]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
