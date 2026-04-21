@@ -61,11 +61,9 @@ export function ChatInterface({ sessionId }: Props) {
     abortRef.current = new AbortController();
 
     try {
-      const token = await apiClient.defaults.headers.Authorization;
       const apiUrl =
         (process.env['NEXT_PUBLIC_API_URL'] ?? 'http://localhost:4000') + '/api/v1';
 
-      // Get auth token
       const authHeader = apiClient.defaults.headers.common?.['Authorization'] as string | undefined;
 
       const response = await fetch(`${apiUrl}/chat/sessions/${sessionId}/messages`, {
@@ -84,8 +82,11 @@ export function ChatInterface({ sessionId }: Props) {
       const decoder = new TextDecoder();
       let aiContent = '';
 
-      while (true) {
-        const { done, value } = await reader.read();
+      let done = false;
+      while (!done) {
+        const result = await reader.read();
+        done = result.done;
+        const { value } = result;
         if (done) break;
 
         const text = decoder.decode(value, { stream: true });

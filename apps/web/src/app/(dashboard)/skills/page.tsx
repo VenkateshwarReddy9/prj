@@ -4,7 +4,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api-client';
 import { CheckCircle, Circle, Clock } from 'lucide-react';
 import { toast } from 'sonner';
-import type { SkillRoadmap, RoadmapSkill } from '@careercompass/types';
 
 // Using the types structure from the backend
 interface RoadmapWithSkills {
@@ -101,7 +100,7 @@ export default function SkillsPage() {
 
       {/* Skills timeline */}
       <div className="space-y-4">
-        {roadmap.skills.map((skill, i) => {
+        {roadmap.skills.map((skill) => {
           const isComplete = !!skill.completedAt;
           return (
             <div

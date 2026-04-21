@@ -10,7 +10,7 @@ interface Props {
   onUpdate: () => void;
 }
 
-export function ResumeCard({ resume, onUpdate }: Props) {
+export function ResumeCard({ resume, onUpdate: _onUpdate }: Props) {
   const score = resume.atsScore;
   const scoreColor =
     score == null ? 'text-gray-400' :
