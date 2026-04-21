@@ -12,7 +12,6 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  Cell,
 } from 'recharts';
 import { TrendingUp, DollarSign, Briefcase, MapPin } from 'lucide-react';
 
