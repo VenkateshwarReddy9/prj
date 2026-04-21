@@ -68,9 +68,10 @@ model User {
   currentTitle     String?
   targetRole       String?
   yearsExp         Int?
-  skills           String[]
-  location         String?
-  createdAt        DateTime @default(now())
+  skills              String[]
+  location            String?
+  notificationPrefs   Json?
+  createdAt           DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
   assessments       Assessment[]

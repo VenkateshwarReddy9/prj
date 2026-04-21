@@ -1,4 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
+import * as Sentry from '@sentry/node';
 import { ZodError } from 'zod';
 import { AppError, PlanRequiredError, QuotaExceededError, RateLimitError } from '../lib/errors.js';
 import { logger } from '../lib/logger.js';
@@ -15,6 +16,10 @@ export function errorHandler(err: Error, req: Request, res: Response, _next: Nex
       },
       'Unhandled error'
     );
+    Sentry.captureException(err, {
+      user: { id: req.userId },
+      extra: { path: req.path, method: req.method },
+    });
   }
 
   if (err instanceof PlanRequiredError) {
