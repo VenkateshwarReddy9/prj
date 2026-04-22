@@ -51,16 +51,19 @@ jobs:
       STRIPE_SECRET_KEY: sk_test_placeholder
       STRIPE_WEBHOOK_SECRET: whsec_placeholder
       NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: pk_test_placeholder
-      STRIPE_STARTER_PRICE_ID: price_placeholder
-      STRIPE_PRO_PRICE_ID: price_placeholder
+      STRIPE_STARTER_MONTHLY_PRICE_ID: price_placeholder
+      STRIPE_PRO_MONTHLY_PRICE_ID: price_placeholder
       SUPABASE_URL: https://placeholder.supabase.co
       SUPABASE_SERVICE_KEY: placeholder
       PINECONE_API_KEY: placeholder
       PINECONE_INDEX: careercompass
+      VOYAGE_API_KEY: voyage_placeholder
       RESEND_API_KEY: re_placeholder
+      RESEND_FROM_EMAIL: noreply@careercompass.ai
       ADZUNA_APP_ID: placeholder
       ADZUNA_API_KEY: placeholder
       JSEARCH_API_KEY: placeholder
+      FRONTEND_URL: http://localhost:3000
       NEXT_PUBLIC_APP_URL: http://localhost:3000
       NEXT_PUBLIC_API_URL: http://localhost:4000
       ADMIN_USER_IDS: ''
