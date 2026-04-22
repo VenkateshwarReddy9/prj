@@ -2,6 +2,13 @@
 const nextConfig = {
   reactStrictMode: true,
   transpilePackages: ['@careercompass/types', '@careercompass/validators', '@careercompass/constants'],
+  webpack: (config) => {
+    config.resolve.extensionAlias = {
+      '.js': ['.ts', '.tsx', '.js'],
+      '.mjs': ['.mts', '.mjs'],
+    };
+    return config;
+  },
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: 'img.clerk.com' },

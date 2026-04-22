@@ -32,7 +32,7 @@ const GOAL_OPTIONS = [
 ];
 
 const schema = z.object({
-  displayName: z.string().min(1, 'Name is required'),
+  name: z.string().min(1, 'Name is required'),
   location: z.string().min(1, 'Location is required'),
   currentTitle: z.string().optional(),
   targetRole: z.string().min(1, 'Target role is required'),
@@ -65,27 +65,28 @@ export default function OnboardingPage() {
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
-      displayName: user?.fullName ?? '',
+      name: user?.fullName ?? '',
       goals: [],
     },
   });
 
   const complete = useMutation({
     mutationFn: (data: FormData) =>
-      apiClient.patch('/users/me', {
-        displayName: data.displayName,
+      apiClient.post('/users/onboarding', {
+        name: data.name,
         location: data.location,
-        currentTitle: data.currentTitle,
+        currentTitle: data.currentTitle || '',
         targetRole: data.targetRole,
-        yearsExp: EXPERIENCE_OPTIONS.indexOf(data.yearsExp),
-        onboardingDone: true,
+        yearsExp: Math.max(0, EXPERIENCE_OPTIONS.indexOf(data.yearsExp)),
+        skills: [],
+        goals: data.goals,
       }),
     onSuccess: () => router.push('/dashboard'),
   });
 
   const goNext = async () => {
     let valid = true;
-    if (step === 1) valid = await trigger(['displayName', 'location']);
+    if (step === 1) valid = await trigger(['name', 'location']);
     if (step === 2) valid = await trigger(['currentTitle', 'targetRole']);
     if (step === 3) valid = selectedGoals.length > 0;
     if (step === 4) valid = await trigger(['yearsExp']);
@@ -152,12 +153,12 @@ export default function OnboardingPage() {
                       Full Name
                     </label>
                     <input
-                      {...register('displayName')}
+                      {...register('name')}
                       placeholder="Jane Smith"
                       className="w-full px-4 py-3 border border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
-                    {errors.displayName && (
-                      <p className="text-red-500 text-xs mt-1">{errors.displayName.message}</p>
+                    {errors.name && (
+                      <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>
                     )}
                   </div>
                   <div>

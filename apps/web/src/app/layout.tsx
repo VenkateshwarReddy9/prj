@@ -1,14 +1,12 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
 import { ClerkProvider } from '@clerk/nextjs';
 import { ThemeProvider } from 'next-themes';
 import { Toaster } from 'sonner';
 import { QueryProvider } from '@/components/providers/QueryProvider';
 import { SocketProvider } from '@/components/providers/SocketProvider';
 import { AuthApiProvider } from '@/components/providers/AuthApiProvider';
+import { PostHogProvider } from '@/components/providers/PostHogProvider';
 import './globals.css';
-
-const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'CareerCompass — AI-Powered Career Guidance',
@@ -26,16 +24,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
-        <body className={inter.className}>
+        <body className="font-sans antialiased">
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <QueryProvider>
-              <AuthApiProvider>
-                <SocketProvider>
-                  {children}
-                  <Toaster richColors position="top-right" />
-                </SocketProvider>
-              </AuthApiProvider>
-            </QueryProvider>
+            <PostHogProvider>
+              <QueryProvider>
+                <AuthApiProvider>
+                  <SocketProvider>
+                    {children}
+                    <Toaster richColors position="top-right" />
+                  </SocketProvider>
+                </AuthApiProvider>
+              </QueryProvider>
+            </PostHogProvider>
           </ThemeProvider>
         </body>
       </html>

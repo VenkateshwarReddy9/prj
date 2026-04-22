@@ -37,7 +37,7 @@ export function AssessmentProgress({ jobId, assessmentId }: Props) {
       if (data.jobId === jobId) {
         setIsDone(true);
         setTimeout(() => {
-          router.push(`/dashboard/assessment/${data.assessmentId}`);
+          router.push(`/assessment/${data.assessmentId}`);
         }, 1500);
       }
     };

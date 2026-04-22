@@ -7,31 +7,27 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { toast } from 'sonner';
-import { Loader2, User, MapPin, Briefcase, Link as LinkIcon } from 'lucide-react';
+import { Loader2, User, MapPin, Briefcase } from 'lucide-react';
 import { useEffect } from 'react';
 
 const profileSchema = z.object({
-  displayName: z.string().min(1, 'Name is required').max(100),
-  headline: z.string().max(200).optional(),
+  name: z.string().min(1, 'Name is required').max(100),
+  currentTitle: z.string().max(200).optional(),
   location: z.string().max(100).optional(),
   targetRole: z.string().max(100).optional(),
-  linkedinUrl: z.string().url('Must be a valid URL').optional().or(z.literal('')),
-  githubUrl: z.string().url('Must be a valid URL').optional().or(z.literal('')),
-  bio: z.string().max(500).optional(),
+  yearsExp: z.coerce.number().int().min(0).max(50).optional(),
 });
 
 type ProfileForm = z.infer<typeof profileSchema>;
 
 interface UserProfile {
   id: string;
-  displayName: string;
+  name: string | null;
   email: string;
-  headline?: string;
-  location?: string;
-  targetRole?: string;
-  linkedinUrl?: string;
-  githubUrl?: string;
-  bio?: string;
+  currentTitle?: string | null;
+  location?: string | null;
+  targetRole?: string | null;
+  yearsExp?: number | null;
   plan: string;
   createdAt: string;
 }
@@ -58,13 +54,11 @@ export default function ProfilePage() {
   useEffect(() => {
     if (profile) {
       reset({
-        displayName: profile.displayName || '',
-        headline: profile.headline || '',
+        name: profile.name || '',
+        currentTitle: profile.currentTitle || '',
         location: profile.location || '',
         targetRole: profile.targetRole || '',
-        linkedinUrl: profile.linkedinUrl || '',
-        githubUrl: profile.githubUrl || '',
-        bio: profile.bio || '',
+        yearsExp: profile.yearsExp ?? undefined,
       });
     }
   }, [profile, reset]);
@@ -100,7 +94,7 @@ export default function ProfilePage() {
         )}
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            {profile?.displayName || clerkUser?.fullName}
+            {profile?.name || clerkUser?.fullName}
           </h1>
           <p className="text-gray-500 text-sm">{profile?.email}</p>
           <span className="inline-block mt-1 text-xs px-2 py-0.5 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full font-medium">
@@ -121,19 +115,19 @@ export default function ProfilePage() {
                 Full Name *
               </label>
               <input
-                {...register('displayName')}
+                {...register('name')}
                 className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-              {errors.displayName && (
-                <p className="text-red-500 text-xs mt-1">{errors.displayName.message}</p>
+              {errors.name && (
+                <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>
               )}
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Headline
+                Current Title
               </label>
               <input
-                {...register('headline')}
+                {...register('currentTitle')}
                 placeholder="e.g. Senior Software Engineer"
                 className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -165,48 +159,16 @@ export default function ProfilePage() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Bio
-            </label>
-            <textarea
-              {...register('bio')}
-              rows={3}
-              placeholder="A short bio about yourself..."
-              className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-            />
-          </div>
-        </div>
-
-        <div className="p-6 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 space-y-4">
-          <h2 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-            <LinkIcon className="h-4 w-4" /> Social Links
-          </h2>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              LinkedIn URL
+              Years of Experience
             </label>
             <input
-              {...register('linkedinUrl')}
-              placeholder="https://linkedin.com/in/yourname"
+              {...register('yearsExp')}
+              type="number"
+              min={0}
+              max={50}
+              placeholder="e.g. 5"
               className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-            {errors.linkedinUrl && (
-              <p className="text-red-500 text-xs mt-1">{errors.linkedinUrl.message}</p>
-            )}
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              GitHub URL
-            </label>
-            <input
-              {...register('githubUrl')}
-              placeholder="https://github.com/yourname"
-              className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            {errors.githubUrl && (
-              <p className="text-red-500 text-xs mt-1">{errors.githubUrl.message}</p>
-            )}
           </div>
         </div>
 

@@ -5,6 +5,8 @@ import { createApp } from './app.js';
 import { createSocketServer } from './socket/index.js';
 import { createAssessmentWorker } from './queues/assessment.worker.js';
 import { createResumeParseWorker } from './queues/resume-parse.worker.js';
+import { createEmailWorker } from './queues/email.worker.js';
+import { createEmbeddingWorker } from './queues/embedding.worker.js';
 import { setSocketIO } from './services/notification/notification.service.js';
 import { prisma } from './config/prisma.js';
 import { redis } from './config/redis.js';
@@ -30,6 +32,8 @@ async function main() {
   // BullMQ Workers
   const assessmentWorker = createAssessmentWorker();
   const resumeParseWorker = createResumeParseWorker();
+  const emailWorker = createEmailWorker();
+  const embeddingWorker = createEmbeddingWorker();
 
   assessmentWorker.on('failed', (job, err) => {
     logger.error({ jobId: job?.id, err }, 'Assessment job failed');
@@ -56,6 +60,8 @@ async function main() {
       await Promise.all([
         assessmentWorker.close(),
         resumeParseWorker.close(),
+        emailWorker.close(),
+        embeddingWorker.close(),
       ]);
       logger.info('BullMQ workers closed');
 

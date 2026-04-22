@@ -48,7 +48,7 @@ export function ResumeCard({ resume, onUpdate: _onUpdate }: Props) {
           )}
 
           <Link
-            href={`/dashboard/resume/${resume.id}`}
+            href="/resume"
             className="px-4 py-2 text-sm border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
           >
             View Details
