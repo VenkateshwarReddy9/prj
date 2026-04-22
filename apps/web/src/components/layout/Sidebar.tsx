@@ -18,18 +18,18 @@ import {
 
 const navItems = [
   { href: '/dashboard', icon: LayoutDashboard, label: 'Overview' },
-  { href: '/dashboard/assessment', icon: Compass, label: 'Assessment' },
-  { href: '/dashboard/jobs', icon: Briefcase, label: 'Jobs' },
-  { href: '/dashboard/resume', icon: FileText, label: 'Resume' },
-  { href: '/dashboard/chat', icon: MessageSquare, label: 'AI Coach' },
-  { href: '/dashboard/interview', icon: Mic, label: 'Interview Prep' },
-  { href: '/dashboard/skills', icon: TrendingUp, label: 'Skill Roadmap' },
-  { href: '/dashboard/insights', icon: BarChart2, label: 'Market Insights' },
+  { href: '/assessment/new', icon: Compass, label: 'Assessment' },
+  { href: '/jobs', icon: Briefcase, label: 'Jobs' },
+  { href: '/resume', icon: FileText, label: 'Resume' },
+  { href: '/chat', icon: MessageSquare, label: 'AI Coach' },
+  { href: '/interview', icon: Mic, label: 'Interview Prep' },
+  { href: '/skills', icon: TrendingUp, label: 'Skill Roadmap' },
+  { href: '/insights', icon: BarChart2, label: 'Market Insights' },
 ];
 
 const bottomItems = [
-  { href: '/dashboard/settings', icon: Settings, label: 'Settings' },
-  { href: '/dashboard/billing', icon: CreditCard, label: 'Billing' },
+  { href: '/settings', icon: Settings, label: 'Settings' },
+  { href: '/billing', icon: CreditCard, label: 'Billing' },
 ];
 
 export function Sidebar() {

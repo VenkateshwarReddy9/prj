@@ -53,7 +53,7 @@ export default function JobsPage() {
           </p>
         </div>
         <Link
-          href="/dashboard/jobs/tracker"
+          href="/jobs/tracker"
           className="text-sm text-blue-600 hover:underline"
         >
           View Saved Jobs →

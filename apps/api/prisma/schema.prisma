@@ -70,6 +70,7 @@ model User {
   yearsExp         Int?
   skills              String[]
   location            String?
+  goals               String[]
   notificationPrefs   Json?
   createdAt           DateTime @default(now())
   updatedAt        DateTime @updatedAt

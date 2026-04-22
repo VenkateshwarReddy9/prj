@@ -65,7 +65,7 @@ export function AssessmentWizard() {
       );
       setJobId(response.data.data.jobId);
       reset();
-      router.push(`/dashboard/assessment/${response.data.data.assessmentId}`);
+      router.push(`/assessment/${response.data.data.assessmentId}`);
     } catch {
       toast.error('Failed to submit assessment. Please try again.');
       setSubmitting(false);

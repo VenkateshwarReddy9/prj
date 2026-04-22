@@ -69,7 +69,7 @@ export function Header() {
               </div>
               <div className="p-3 border-t border-gray-200 dark:border-gray-800">
                 <Link
-                  href="/dashboard/settings"
+                  href="/settings"
                   className="text-xs text-blue-600 hover:underline"
                   onClick={() => setNotifOpen(false)}
                 >
