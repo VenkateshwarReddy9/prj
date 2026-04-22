@@ -93,10 +93,6 @@ jobs:
       - name: Typecheck
         run: pnpm typecheck
 
-      - name: Sync Prisma schema to test DB
-        working-directory: apps/api
-        run: pnpm exec prisma db push --skip-generate --accept-data-loss
-
       - name: Run tests
         run: pnpm test --reporter=verbose
 
