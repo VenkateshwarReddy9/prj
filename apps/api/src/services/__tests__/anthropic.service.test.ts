@@ -93,7 +93,7 @@ describe('AnthropicService', () => {
         system: 'sys',
         messages: [{ role: 'user', content: 'hi' }],
       })) {
-        if (event.type === 'token') tokens.push(event.token);
+        if (event.type === 'token') tokens.push(event.content);
       }
 
       expect(tokens).toEqual(['Hello', ' world']);
